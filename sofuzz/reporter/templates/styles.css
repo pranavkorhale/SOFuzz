@@ -1,0 +1,92 @@
+/* SOFuzz Report Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #eee;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    padding: 30px 0;
+    border-bottom: 2px solid #0f3460;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #00d9ff;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section h2 {
+    color: #00d9ff;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+    background: rgba(0, 217, 255, 0.1);
+    color: #00d9ff;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.badge-critical {
+    background: #ff4757;
+    color: white;
+}
+
+.badge-high {
+    background: #ffa502;
+    color: white;
+}
+
+.badge-medium {
+    background: #ffdd59;
+    color: black;
+}
+
+.badge-low {
+    background: #2ed573;
+    color: white;
+}

@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: sofuzz
+Version: 1.0.0
+Summary: Smart Fuzzer for Android Native Libraries
+Requires-Python: >=3.8
+License-File: LICENSE
+Requires-Dist: pyelftools>=0.29
+Requires-Dist: capstone>=4.0.2
+Requires-Dist: jinja2>=3.1.2
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: colorama>=0.4.6
+Requires-Dist: rich>=13.0.0
+Requires-Dist: psutil>=5.9.0
+Requires-Dist: markdown>=3.4.0
+Dynamic: license-file

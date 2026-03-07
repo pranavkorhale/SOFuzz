@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     'output/harnesses/libdatastore_shared_counter/harness__ZN9datastore12TruncateFileEi'
+relocations:     []
+...

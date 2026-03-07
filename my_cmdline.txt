@@ -1,0 +1,49 @@
+┌─────────────────────────────────────────────────────────────────────┐
+│                     SOFUZZ COMMAND REFERENCE                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  FULL WORKFLOW:                                                     │
+│  ──────────────                                                     │
+│  sofuzz --target library.so                                        │
+│  sofuzz --apk app.apk                                              │
+│  sofuzz --target library.so --function parse_data                  │
+│                                                                     │
+│  ANALYSIS ONLY:                                                     │
+│  ──────────────                                                     │
+│  sofuzz --target library.so --analyze-only                         │
+│  sofuzz --target library.so --list-functions                       │
+│                                                                     │
+│  HARNESS ONLY:                                                      │
+│  ─────────────                                                      │
+│  sofuzz --target library.so --generate-harness                     │
+│                                                                     │
+│  CUSTOM OPTIONS:                                                    │
+│  ───────────────                                                    │
+│  sofuzz --target library.so --timeout 5                            │
+│  sofuzz --target library.so --iterations 100000                    │
+│  sofuzz --target library.so --max-time 3600                        │
+│  sofuzz --target library.so --seeds ./my_seeds                     │
+│  sofuzz --target library.so --output ./my_output                   │
+│                                                                     │
+│  VERBOSE MODE:                                                      │
+│  ─────────────                                                      │
+│  sofuzz --target library.so -v                                     │
+│  sofuzz --target library.so --verbose                              │
+│                                                                     │
+│  HELP:                                                              │
+│  ─────                                                              │
+│  sofuzz --help                                                     │
+│  sofuzz --version                                                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+# 1. Navigate to project
+cd /Users/pkorhale/Documents/project-work/SOFuzz
+
+# 2. Activate virtual environment
+source venv/bin/activate
+
+# 3. Use sofuzz
+sofuzz --help
+sofuzz --target /path/to/library.so --analyze-only
