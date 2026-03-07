@@ -1,5 +1,0 @@
----
-triple:          'arm64-apple-darwin'
-binary-path:     'output/harnesses/libdatastore_shared_counter/harness__Z16ThrowIoExceptionP7_JNIEnvPKc'
-relocations:     []
-...

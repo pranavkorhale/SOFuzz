@@ -1,2 +1,0 @@
-[console_scripts]
-sofuzz = sofuzz.main:main

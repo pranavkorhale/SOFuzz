@@ -1,5 +1,0 @@
----
-triple:          'arm64-apple-darwin'
-binary-path:     'output/harnesses/libdatastore_shared_counter/harness__ZN9datastore27IncrementAndGetCounterValueEPNSt6__ndk16atomicIjEE'
-relocations:     []
-...

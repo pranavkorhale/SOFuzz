@@ -1,5 +1,0 @@
----
-triple:          'arm64-apple-darwin'
-binary-path:     'output/harnesses/libcronet.76.0.3809.111/harness_Cronet_Runnable_CreateWith'
-relocations:     []
-...
