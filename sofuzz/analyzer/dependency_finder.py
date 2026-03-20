@@ -11,6 +11,7 @@ from ..utils.logger import get_logger
 from .elf_parser import ELFParser, ELFInfo, SectionHeader
 
 
+# Dynamic section tag values
 DT_NULL = 0
 DT_NEEDED = 1
 DT_STRTAB = 5
@@ -22,6 +23,7 @@ DT_RUNPATH = 29
 
 @dataclass
 class DependencyInfo:
+    """Dependency information"""
     needed_libs: List[str] = field(default_factory=list)
     soname: Optional[str] = None
     rpath: Optional[str] = None
@@ -29,6 +31,9 @@ class DependencyInfo:
 
 
 class DependencyFinder:
+    """
+    Finds dependencies in ELF files
+    """
     
     def __init__(self, file_path: str):
         self.file_path = file_path
@@ -40,6 +45,7 @@ class DependencyFinder:
         self.is_64bit: bool = True
     
     def find(self) -> DependencyInfo:
+        """Find all dependencies"""
         dep_info = DependencyInfo()
         
         try:
@@ -71,6 +77,7 @@ class DependencyFinder:
         return dep_info
     
     def _get_section_by_name(self, name: str) -> Optional[SectionHeader]:
+        """Get section by name"""
         if not self.elf_info:
             return None
         for section in self.elf_info.sections:
@@ -79,6 +86,7 @@ class DependencyFinder:
         return None
     
     def _parse_dynamic_section(self, dynamic: SectionHeader, dynstr: bytes) -> DependencyInfo:
+        """Parse the .dynamic section"""
         dep_info = DependencyInfo()
         
         if self.is_64bit:
@@ -116,18 +124,23 @@ class DependencyFinder:
         return dep_info
     
     def _get_string(self, strtab: bytes, offset: int) -> str:
+        """Get null-terminated string from string table"""
         if offset >= len(strtab):
             return ""
+        
         end = strtab.find(b'\x00', offset)
         if end == -1:
             end = len(strtab)
+        
         return strtab[offset:end].decode('utf-8', errors='ignore')
     
     def get_needed_libs(self) -> List[str]:
+        """Get list of needed libraries"""
         dep_info = self.find()
         return dep_info.needed_libs
     
     def print_dependencies(self) -> None:
+        """Print dependencies (for debugging)"""
         dep_info = self.find()
         
         print(f"\n{'='*50}")

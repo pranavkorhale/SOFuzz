@@ -1,0 +1,173 @@
+# SOFuzz Configuration File
+
+# General settings
+project_name: "SOFuzz"
+version: "1.0.0"
+
+# Paths (relative to project root)
+paths:
+  output_dir: "output"
+  extracted_dir: "output/extracted"
+  analysis_dir: "output/analysis"
+  harness_dir: "output/harnesses"
+  crash_dir: "output/crashes"
+  coverage_dir: "output/coverage"
+  report_dir: "output/reports"
+  seeds_dir: "data/seeds"
+  dictionaries_dir: "data/dictionaries"
+
+# APK Extractor settings
+extractor:
+  # Architectures to extract (in order of preference)
+  preferred_archs:
+    - "x86_64"
+    - "x86"
+    - "arm64-v8a"
+    - "armeabi-v7a"
+  
+  # Skip system libraries
+  skip_libs:
+    - "libc.so"
+    - "libm.so"
+    - "libdl.so"
+    - "liblog.so"
+    - "libz.so"
+    - "libstdc++.so"
+    - "libc++_shared.so"
+
+# ELF Analyzer settings
+analyzer:
+  # Skip these function prefixes
+  skip_function_prefixes:
+    - "_init"
+    - "_fini"
+    - "__cxa_"
+    - "__gxx_"
+    - "_ITM_"
+    - "_Jv_"
+    - "frame_dummy"
+    - "__do_global"
+    - "__libc_"
+  
+  # Minimum function size to consider (bytes)
+  min_function_size: 10
+
+# Harness Generator settings
+harness:
+  # Compiler to use
+  compiler: "gcc"
+  
+  # Compiler flags
+  compiler_flags:
+    - "-g"
+    - "-O0"
+    - "-fno-omit-frame-pointer"
+  
+  # Sanitizer flags (optional)
+  sanitizer_flags:
+    - "-fsanitize=address"
+    - "-fsanitize=undefined"
+  
+  # Timeout for harness execution (seconds)
+  execution_timeout: 2
+
+# Mutator settings
+mutator:
+  # Maximum number of mutations per input
+  max_mutations: 10
+  
+  # Mutation strategies and their weights
+  strategies:
+    bitflip: 20
+    byteflip: 20
+    arithmetic: 15
+    interesting: 20
+    block: 15
+    dictionary: 10
+  
+  # Interesting values to inject
+  interesting_8bit:
+    - 0
+    - 1
+    - 127
+    - 128
+    - 255
+  
+  interesting_16bit:
+    - 0
+    - 1
+    - 255
+    - 256
+    - 32767
+    - 32768
+    - 65535
+  
+  interesting_32bit:
+    - 0
+    - 1
+    - 65535
+    - 65536
+    - 2147483647
+    - 2147483648
+    - 4294967295
+
+# Fuzzer Engine settings
+fuzzer:
+  # Maximum iterations (0 = unlimited)
+  max_iterations: 100000
+  
+  # Maximum time in seconds (0 = unlimited)
+  max_time: 3600
+  
+  # Number of parallel workers
+  num_workers: 1
+  
+  # Execution timeout per input (seconds)
+  timeout: 2
+  
+  # Maximum input size (bytes)
+  max_input_size: 1048576  # 1MB
+  
+  # Minimum input size (bytes)
+  min_input_size: 1
+  
+  # Save all inputs (not just crashes)
+  save_all: false
+
+# Crash Handler settings
+crash:
+  # Enable crash deduplication
+  deduplicate: true
+  
+  # Maximum crashes to save
+  max_crashes: 1000
+  
+  # Crash signals to detect
+  signals:
+    - "SIGSEGV"
+    - "SIGABRT"
+    - "SIGFPE"
+    - "SIGILL"
+    - "SIGBUS"
+
+# Reporter settings
+reporter:
+  # Report formats to generate
+  formats:
+    - "html"
+    - "json"
+    - "txt"
+  
+  # Include detailed analysis
+  detailed: true
+
+# Logging settings
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  
+  # Log to file
+  log_file: "output/sofuzz.log"
+  
+  # Show colors in console
+  colors: true

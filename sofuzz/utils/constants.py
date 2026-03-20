@@ -140,6 +140,7 @@ SYSTEM_LIBS: List[str] = [
     "liblog.so",
     "libz.so",
     "libstdc++.so",
+    "libc++_shared.so",
     "libandroid.so",
     "libEGL.so",
     "libGLESv2.so",
