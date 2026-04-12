@@ -1,0 +1,16 @@
+# 1. Activate your environment
+source venv/bin/activate
+
+# 2. Extract, Trace, and Build the C-Harnesses automatically (without fuzzing blindly)
+sofuzz --apk washingmachine.apk --generate-harness
+
+# 3. Locate the core library inside the 'output/' folder and rip out its structural passwords into a Seed Dictionary
+# (Note: Replace 'libmachine.so' with whatever the actual name of the core library is from the command above!)
+python3 scripts/seed_generator.py output/extracted/washingmachine/arm64-v8a/libmachine.so
+
+# 4. Activate the AFL Python Smart Mutator to enforce Structural offset protection
+export AFL_PYTHON_MODULE=$(pwd)/scripts/afl_custom_mutator.py
+
+# 5. Launch the Fuzzer using your extracted seeds natively hitting the Sequence Combo harness!
+# (Note: You must run this final command on a Linux machine or Docker container with AFL++ installed)
+afl-fuzz -i output/seeds_generated/raw_seeds -o output/fuzz_findings -- ./output/harnesses/libmachine/harness_sequence_combo
