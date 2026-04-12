@@ -158,6 +158,9 @@ def extract_from_apk(apk_path: str, output_dir: str) -> List[str]:
     extractor = APKExtractor(apk_path, output_dir=output_dir)
     result = extractor.extract_best_arch()
     
+    # Run Phase 1 Native Fingerprinting
+    getattr(extractor, 'generate_fingerprint')()
+    
     so_files = []
     for lib in result.libraries:
         so_files.append(lib.path)

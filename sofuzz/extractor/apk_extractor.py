@@ -6,7 +6,7 @@ Extracts .so files from Android APK files
 import os
 import zipfile
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from dataclasses import dataclass, field
 
 from ..utils.logger import get_logger
@@ -269,3 +269,42 @@ class APKExtractor:
         if FileUtils.dir_exists(self.extract_path):
             FileUtils.delete_dir(self.extract_path)
             self.logger.info(f"Cleaned up: {self.extract_path}")
+
+    def generate_fingerprint(self) -> Dict[str, Any]:
+        """Generate a comprehensive fingerprint of all APK native libraries (DroidOT Phase 1)"""
+        from ..analyzer.function_analyzer import FunctionAnalyzer
+        
+        fingerprint = {
+            "apk_name": self.apk_name,
+            "total_libraries": 0,
+            "total_jni_endpoints": 0,
+            "libraries": {}
+        }
+        
+        # Ensure extraction has happened
+        so_files = self.get_library_paths()
+        if not so_files:
+            self.extract_best_arch()
+            so_files = self.get_library_paths()
+            
+        fingerprint["total_libraries"] = len(so_files)
+        
+        for so in so_files:
+            lib_name = os.path.basename(so)
+            analyzer = FunctionAnalyzer(so)
+            result = analyzer.analyze()
+            
+            fingerprint["total_jni_endpoints"] += result.jni_count
+            fingerprint["libraries"][lib_name] = {
+                "jni_count": result.jni_count,
+                "fuzzable_count": result.fuzzable_count,
+                "dependencies": result.dependencies,
+                "jni_endpoints": [f.name for f in result.jni_functions]
+            }
+            
+            self.logger.info(f"Fingerprint: {lib_name} exposes {result.jni_count} JNI methods")
+            
+        fingerprint_path = os.path.join(self.output_dir, f"{self.apk_name}.fingerprint.json")
+        FileUtils.write_json(fingerprint_path, fingerprint)
+        self.logger.success(f"Generated comprehensive APK Native Fingerprint: {fingerprint_path}")
+        return fingerprint

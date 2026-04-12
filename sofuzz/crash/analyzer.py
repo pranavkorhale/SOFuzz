@@ -160,8 +160,38 @@ class CrashAnalyzer:
         if report.stdout:
             stdout_path = os.path.join(report_dir, "stdout.txt")
             FileUtils.write_text(stdout_path, report.stdout)
+            
+        # Generate GDB server replay script
+        gdb_script = self._generate_gdb_script(report)
+        gdb_path = os.path.join(report_dir, "repro.gdb")
+        FileUtils.write_text(gdb_path, gdb_script)
         
         return report_dir
+    
+    def _generate_gdb_script(self, report: CrashReport) -> str:
+        """Generate a deterministic GDB replay script for triage"""
+        lines = [
+            "# Auto-generated GDB Triage Script by SOFuzz",
+            f"# Target Crash ID: {report.crash_id}",
+            "set pagination off",
+            f"run < {report.input_path}",
+            "info registers",
+            "bt full",
+            "quit"
+        ]
+        return '\n'.join(lines)
+        
+    def _extract_root_cause(self, report: CrashReport) -> str:
+        """Estimate the true root cause string from the top stack frame"""
+        if not report.stack_trace:
+            return "Unknown Native Fault"
+        top_frame = report.stack_trace[0]
+        # Clean up things like '#0  0x00000000000028fc in ...'
+        if ' in ' in top_frame:
+            top_frame = top_frame.split(' in ')[1]
+        elif ' at ' in top_frame:
+            top_frame = top_frame.split(' at ')[1]
+        return f"{report.classification.crash_type} at {top_frame}"
     
     def _generate_text_report(self, report: CrashReport) -> str:
         """Generate human-readable text report"""
@@ -183,6 +213,7 @@ class CrashAnalyzer:
             f"Type:          {report.classification.crash_type}",
             f"Severity:      {report.classification.severity.value}",
             f"Exploitable:   {report.classification.exploitability.value}",
+            f"Root Cause:    {self._extract_root_cause(report)}",
             "",
             f"Description:   {report.classification.description}",
             "",

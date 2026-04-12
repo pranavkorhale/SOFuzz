@@ -12,6 +12,7 @@ from ..utils.constants import SKIP_FUNCTION_PREFIXES
 from .elf_parser import ELFParser, ELFInfo
 from .symbol_extractor import SymbolExtractor, Symbol, SymbolTable
 from .dependency_finder import DependencyFinder, DependencyInfo
+from .call_graph import CallGraph
 
 
 @dataclass
@@ -74,6 +75,8 @@ class FunctionAnalyzer:
         self.elf_parser = ELFParser(file_path)
         self.symbol_extractor = SymbolExtractor(file_path)
         self.dependency_finder = DependencyFinder(file_path)
+        self.call_graph = CallGraph(file_path)
+        self.cg_built = False
     
     def analyze(self) -> AnalysisResult:
         """Perform complete analysis"""
@@ -103,6 +106,19 @@ class FunctionAnalyzer:
             result.is_64bit = elf_info.header.is_64bit
             
             symbol_table = self.symbol_extractor.extract()
+            
+            if not self.cg_built:
+                self.logger.info("Building Call Graph for deeper analysis...")
+                self.call_graph.build()
+                self.cg_built = True
+                
+                dot_path = self.file_path + ".callgraph.dot"
+                self.call_graph.export_dot(dot_path, self.RISKY_KEYWORDS)
+                
+                # Phase 3: Bidirectional Callbacks
+                callbacks = self.call_graph.find_callbacks()
+                if callbacks:
+                    self.logger.warning(f"Found {len(callbacks)} bidirectional Java callbacks traversing back into Dalvik state!")
             
             for sym in symbol_table.functions:
                 func_info = self._analyze_function(sym)
@@ -157,6 +173,12 @@ class FunctionAnalyzer:
             if keyword in name_lower:
                 func.risk_score += 15
                 func.notes.append(f"Risky: contains '{keyword}'")
+                
+        # Call Graph integration: Check if it eventually reaches a risky function
+        if hasattr(self, 'cg_built') and self.cg_built:
+            if self.call_graph.reaches_risky_functions(func.address, self.RISKY_KEYWORDS):
+                func.risk_score += 25
+                func.notes.append("Graph analysis: reaches risky functions internally")
         
         if symbol.size > 500:
             func.risk_score += 5
